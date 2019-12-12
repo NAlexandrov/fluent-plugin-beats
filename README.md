@@ -6,10 +6,10 @@ This plugin uses lumberjack protocol for communicating with each beat.
 
 ## Requirements
 
-| fluent-plugin-beats | fluentd | ruby |
-|-------------------|---------|------|
-| >= 1.0.0 | >= v1.0.0 | >= 2.1 |
-|  < 1.0.0 | >= v0.12.0 | >= 1.9 |
+| fluent-plugin-beats | fluentd    | ruby   |
+| ------------------- | ---------- | ------ |
+| >= 1.0.0            | >= v1.0.0  | >= 2.1 |
+| < 1.0.0             | >= v0.12.0 | >= 1.9 |
 
 ## Installation
 
@@ -61,6 +61,12 @@ Configuration example:
 **use_ssl**, **ssl_certificate**, **ssl_key**, **ssl_key_passphrase**, **ssl_version**, **ssl_ciphers**
 
   For lumberjack protocol.
+
+**winlogbeat_event_code_as_tag**
+
+  Use `record['event']['code']` value as first part of tag
+
+  Example: if tag `'sometag'` then new tag is `'4624.sometag'`. 4624 is event code from record.
 
 ## Note
 

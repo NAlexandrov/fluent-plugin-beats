@@ -45,6 +45,7 @@ module Fluent::Plugin
     config_param :ssl_key_passphrase, :string, :default => nil
     config_param :ssl_version, :string, :default => nil
     config_param :ssl_ciphers, :string, :default => nil
+    config_param :winlogbeat_event_code_as_tag, :bool, :default => nil
 
     config_section :parse do
       config_set_default :@type, DEFAULT_PARSER
@@ -112,6 +113,11 @@ module Fluent::Plugin
           begin
             conn.run { |map|
               tag = @metadata_as_tag ? map['@metadata']['beat'] : @tag
+
+              if @winlogbeat_event_code_as_tag && map['@metadata']['beat'] === 'winlogbeat'
+                code = map['event']['code']
+                tag = code.to_s + '.' + tag
+              end
 
               if map.has_key?('message') && @parser_config
                 message = map.delete('message')
