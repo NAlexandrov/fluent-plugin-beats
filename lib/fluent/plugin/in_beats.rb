@@ -28,6 +28,7 @@ module Fluent::Plugin
     Fluent::Plugin.register_input('beats', self)
 
     include Fluent::TimeMixin::Parser
+    include Fluent::TimeMixin::Formatter
 
     helpers :compat_parameters, :parser, :thread
 
@@ -64,6 +65,7 @@ module Fluent::Plugin
 
       @port += fluentd_worker_id
       @time_parser = time_parser_create(format: '%Y-%m-%dT%H:%M:%S.%N%z')
+      @time_formatter = time_formatter_create(format: @time_format ? @time_format : '%Y-%m-%dT%H:%M:%S.%N%z')
 
       @parser_config = conf.elements('parse').first
       if @parser_config
@@ -115,6 +117,9 @@ module Fluent::Plugin
                 message = map.delete('message')
                 @parser.parse(message) { |time, record|
                   record['@timestamp'] = map['@timestamp']
+                  if @time_format
+                    record['@timestamp_formatted'] = @time_formatter.format(@time_parser.parse(map['@timestamp']))
+                  end
                   map.each { |k, v|
                     record[k] = v
                   }
